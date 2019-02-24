@@ -35,7 +35,7 @@ def setup_git_repo(args, gitdir, space_marker, fpath):
     if args.verbose:
         sys.stderr.write('Reading article list...\n')
     articles = subprocess.check_output(args.list_cmd,
-                                       shell=True).rstrip('\r\n').split('\n')
+                                       shell=True).decode('utf-8').rstrip('\r\n').split('\n')
 
     # Generate an empty "file" and add the first commit
     open(fpath, 'w').close()
@@ -52,7 +52,7 @@ def add_article(args, article_id, gitdir, space_marker, fpath):
     cmd = '%s %s' % (args.get_cmd, pipes.quote(article_id))
     if args.verbose:
         sys.stderr.write('Calling %s\n' % repr(cmd))
-    article = subprocess.check_output(cmd, shell=True)
+    article = subprocess.check_output(cmd, shell=True).decode('utf-8')
 
     with open(fpath, 'w') as f:
         f.write(article.replace(' ', space_marker + '\n'))
@@ -64,7 +64,7 @@ def add_article(args, article_id, gitdir, space_marker, fpath):
 def report(args, gitdir, space_marker, fpath):
 
     blamed = subprocess.check_output(['git', '-C', gitdir,
-                                      'blame', '-s', 'file'])
+                                      'blame', '-s', 'file']).decode('utf-8')
 
     for line in blamed.split('\n'):
         if line == '':
@@ -72,7 +72,7 @@ def report(args, gitdir, space_marker, fpath):
 
         commit = line.split()[0]
         cmd = ['git', '-C', gitdir, 'show', '-s', '--format=%B', commit]
-        article_id = subprocess.check_output(cmd).rstrip()
+        article_id = subprocess.check_output(cmd).decode('utf-8').rstrip()
 
         text = line[line.find(') ')+2:].rstrip()
 
@@ -81,7 +81,7 @@ def report(args, gitdir, space_marker, fpath):
             p = subprocess.Popen(args.url_cmd, shell=True,
                                  stdout=subprocess.PIPE,
                                  stdin=subprocess.PIPE)
-            url = p.communicate(article_id)[0].rstrip()
+            url = p.communicate(article_id.encode('utf-8'))[0].decode('utf-8').rstrip()
         else:
             url = article_id
         href_start = '<a href="%s" style="color: #%s">' % (url, color)
@@ -103,7 +103,7 @@ def main(args):
         sys.stderr.write('Space marker is %s.\n' % repr(space_marker))
 
     if not args.gitdir:
-        gitdir = subprocess.check_output(['mktemp', '-d']).rstrip('\r\n')
+        gitdir = subprocess.check_output(['mktemp', '-d']).decode('utf-8').rstrip('\r\n')
         if args.keep_repo and args.verbose:
             msg = 'Created temporary directory %s.\n' % repr(gitdir)
             sys.stderr.write(msg)

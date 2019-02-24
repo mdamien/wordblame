@@ -11,12 +11,12 @@ AUTHOR: Jacek Wielemborek, licensed under WTFPL.
 """
 
 from lxml import html
-import urllib
+import urllib.request
 import sys
 
 inurl = sys.argv[1] + '&limit=10000'
 while True:
-    t = html.parse(urllib.urlopen(inurl))
+    t = html.parse(urllib.request.urlopen(inurl))
     for a in t.xpath('//a [@class="mw-changeslist-date"]'):
         url = 'https://en.wikipedia.org' + a.get('href') + '&action=edit'
         print(url)

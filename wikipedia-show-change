@@ -11,8 +11,8 @@ AUTHOR: Jacek Wielemborek, licensed under WTFPL.
 """
 
 from lxml import html
-import urllib
+import urllib.request
 import sys
 
-tree = html.fromstring(urllib.urlopen(sys.argv[1]).read())
+tree = html.fromstring(urllib.request.urlopen(sys.argv[1]).read())
 print(tree.xpath('//textarea')[0].text)
