@@ -66,6 +66,7 @@ def report(args, gitdir, space_marker, fpath):
     blamed = subprocess.check_output(['git', '-C', gitdir,
                                       'blame', '-s', 'file']).decode('utf-8')
 
+    sys.stdout.write('<meta charset="UTF-8"/>')
     for line in blamed.split('\n'):
         if line == '':
             continue
