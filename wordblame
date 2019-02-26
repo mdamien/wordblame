@@ -55,7 +55,7 @@ def add_article(args, article_id, gitdir, space_marker, fpath):
     article = subprocess.check_output(cmd, shell=True).decode('utf-8')
 
     with open(fpath, 'w') as f:
-        f.write(article.replace(' ', space_marker + '\n'))
+        f.write((space_marker + '\n').join(list(article)))
 
     subprocess.call(['git', '-C', gitdir, 'commit', '-q', 'file',
                      '-m', article_id])
@@ -89,7 +89,7 @@ def report(args, gitdir, space_marker, fpath):
         sys.stdout.write(href_start)
 
         if text.endswith(space_marker):
-            sys.stdout.write(text[:-len(space_marker)] + ' ')
+            sys.stdout.write(text[:-len(space_marker)])
         else:
             sys.stdout.write(text)
             sys.stdout.write('<br />\n')
